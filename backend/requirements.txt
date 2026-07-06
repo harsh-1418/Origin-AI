@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+sentence-transformers
+easyocr
+python-multipart
+numpy
+scikit-learn
+transformers
+torch
+requests
+langdetect
+praw
+python-dotenv
