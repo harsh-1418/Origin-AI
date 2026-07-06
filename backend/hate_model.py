@@ -1,22 +1,22 @@
 from transformers import pipeline
 
-# Real pretrained hate speech / toxicity model — no training needed.
-# Loads once at startup, reused across requests.
-_classifier = pipeline(
-    "text-classification",
-    model="unitary/toxic-bert",
-    top_k=None  # return all label scores
-)
+_classifier = None
+
+def _get_classifier():
+    global _classifier
+    if _classifier is None:
+        _classifier = pipeline(
+            "text-classification",
+            model="unitary/toxic-bert",
+            top_k=None
+        )
+    return _classifier
 
 def hate_speech_score(text: str) -> dict:
-    """
-    Returns a dict of toxicity-related scores from a real transformer model.
-    Labels: toxic, severe_toxic, obscene, threat, insult, identity_hate
-    """
-    results = _classifier(text[:512])[0]  # truncate to model's max length
+    classifier = _get_classifier()
+    results = classifier(text[:512])[0]
     scores = {r["label"]: round(r["score"], 3) for r in results}
 
-    # Overall score = max of the harmful categories
     harmful_labels = ["toxic", "severe_toxic", "threat", "identity_hate", "insult"]
     overall = max(scores.get(l, 0) for l in harmful_labels)
 

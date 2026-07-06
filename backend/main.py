@@ -20,8 +20,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-embed_model = SentenceTransformer("all-MiniLM-L6-v2")
+_embed_model = None
 
+def get_embed_model():
+    global _embed_model
+    if _embed_model is None:
+        _embed_model = SentenceTransformer("all-MiniLM-L6-v2")
+    return _embed_model
 # In-memory store of collected posts (sample + real scraped data merged)
 COLLECTED_POSTS = list(SAMPLE_POSTS)
 
@@ -119,23 +124,27 @@ def analyze_text(text: str = Form(...)):
 import tempfile
 import os
 
+_ocr_reader = None
+
+def get_ocr_reader():
+    global _ocr_reader
+    if _ocr_reader is None:
+        import easyocr
+        _ocr_reader = easyocr.Reader(["en", "hi"], gpu=False)
+    return _ocr_reader
+
 @app.post("/analyze-image")
 async def analyze_image(file: UploadFile = File(...)):
-    import easyocr
-
-    reader = easyocr.Reader(["en", "hi"], gpu=False)
+    reader = get_ocr_reader()
     contents = await file.read()
 
-    # Use a cross-platform temp file path (works on Windows, Linux, Render)
     temp_path = os.path.join(tempfile.gettempdir(), "temp_upload.png")
-
     with open(temp_path, "wb") as f:
         f.write(contents)
 
     result = reader.readtext(temp_path, detail=0)
     extracted_text = " ".join(result)
-
-    os.remove(temp_path)  # cleanup
+    os.remove(temp_path)
 
     if not extracted_text.strip():
         return {"error": "No readable text found in image"}

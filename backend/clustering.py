@@ -2,30 +2,30 @@ import numpy as np
 from sentence_transformers import SentenceTransformer
 from sklearn.cluster import DBSCAN
 
-_embed_model = SentenceTransformer("all-MiniLM-L6-v2")
+_embed_model = None
+
+def _get_embed_model():
+    global _embed_model
+    if _embed_model is None:
+        _embed_model = SentenceTransformer("all-MiniLM-L6-v2")
+    return _embed_model
 
 def cluster_posts(posts: list, eps: float = 0.35, min_samples: int = 2):
-    """
-    Groups posts into narrative clusters using sentence embeddings + DBSCAN.
-    Posts in the same cluster are treated as spreading the same narrative,
-    even if reworded differently.
-    """
     texts = [p["text"] for p in posts if p.get("text")]
     valid_posts = [p for p in posts if p.get("text")]
 
     if len(texts) < 2:
         return {"clusters": [], "note": "Not enough posts to cluster"}
 
-    embeddings = _embed_model.encode(texts)
+    embeddings = _get_embed_model().encode(texts)
 
-    # DBSCAN uses distance, so we convert cosine similarity to cosine distance
     clustering = DBSCAN(eps=eps, min_samples=min_samples, metric="cosine").fit(embeddings)
     labels = clustering.labels_
 
     clusters = {}
     for post, label in zip(valid_posts, labels):
         if label == -1:
-            continue  # noise / doesn't belong to any narrative cluster
+            continue
         clusters.setdefault(int(label), []).append(post)
 
     result = []
