@@ -1,7 +1,7 @@
 fastapi
 uvicorn
 sentence-transformers
-easyocr
+#easyocr
 python-multipart
 numpy
 scikit-learn

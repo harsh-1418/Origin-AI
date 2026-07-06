@@ -124,32 +124,32 @@ def analyze_text(text: str = Form(...)):
 import tempfile
 import os
 
-_ocr_reader = None
+# _ocr_reader = None
 
-def get_ocr_reader():
-    global _ocr_reader
-    if _ocr_reader is None:
-        import easyocr
-        _ocr_reader = easyocr.Reader(["en", "hi"], gpu=False)
-    return _ocr_reader
+# def get_ocr_reader():
+#     global _ocr_reader
+#     if _ocr_reader is None:
+#         import easyocr
+#         _ocr_reader = easyocr.Reader(["en", "hi"], gpu=False)
+#     return _ocr_reader
 
-@app.post("/analyze-image")
-async def analyze_image(file: UploadFile = File(...)):
-    reader = get_ocr_reader()
-    contents = await file.read()
+# @app.post("/analyze-image")
+# async def analyze_image(file: UploadFile = File(...)):
+#     reader = get_ocr_reader()
+#     contents = await file.read()
 
-    temp_path = os.path.join(tempfile.gettempdir(), "temp_upload.png")
-    with open(temp_path, "wb") as f:
-        f.write(contents)
+#     temp_path = os.path.join(tempfile.gettempdir(), "temp_upload.png")
+#     with open(temp_path, "wb") as f:
+#         f.write(contents)
 
-    result = reader.readtext(temp_path, detail=0)
-    extracted_text = " ".join(result)
-    os.remove(temp_path)
+#     result = reader.readtext(temp_path, detail=0)
+#     extracted_text = " ".join(result)
+#     os.remove(temp_path)
 
-    if not extracted_text.strip():
-        return {"error": "No readable text found in image"}
+#     if not extracted_text.strip():
+#         return {"error": "No readable text found in image"}
 
-    return analyze_text(text=extracted_text)
+#     return analyze_text(text=extracted_text)
 
 
 @app.get("/propagation-graph")
