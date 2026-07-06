@@ -1,10 +1,10 @@
 import numpy as np
-from sentence_transformers import SentenceTransformer
 from sklearn.cluster import DBSCAN
 
 _embed_model = None
 
 def _get_embed_model():
+    from sentence_transformers import SentenceTransformer
     global _embed_model
     if _embed_model is None:
         _embed_model = SentenceTransformer("all-MiniLM-L6-v2")

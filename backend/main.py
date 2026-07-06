@@ -1,6 +1,5 @@
 from fastapi import FastAPI, UploadFile, File, Form, Query
 from fastapi.middleware.cors import CORSMiddleware
-from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 from langdetect import detect
 
@@ -23,6 +22,7 @@ app.add_middleware(
 _embed_model = None
 
 def get_embed_model():
+    from sentence_transformers import SentenceTransformer
     global _embed_model
     if _embed_model is None:
         _embed_model = SentenceTransformer("all-MiniLM-L6-v2")

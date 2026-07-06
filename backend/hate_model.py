@@ -1,9 +1,10 @@
-from transformers import pipeline
+
 
 _classifier = None
 
 def _get_classifier():
     global _classifier
+    from transformers import pipeline
     if _classifier is None:
         _classifier = pipeline(
             "text-classification",
