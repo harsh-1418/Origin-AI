@@ -1,7 +1,5 @@
 fastapi
 uvicorn
-sentence-transformers
-#easyocr
 python-multipart
 numpy
 scikit-learn
@@ -10,5 +8,4 @@ transformers
 torch==2.9.0+cpu
 requests
 langdetect
-praw
 python-dotenv
