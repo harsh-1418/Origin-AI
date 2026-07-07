@@ -77,15 +77,16 @@ def analyze_text(text: str = Form(...)):
     except Exception:
         language = "unknown"
 
-    def keyword_overlap_score(text_a: str, text_b: str) -> float:
-    """Lightweight similarity using shared significant words — no ML model needed."""
-    stopwords = {"the", "a", "an", "is", "in", "on", "at", "to", "and", "of", "for", "has", "have"}
-    words_a = set(w.lower() for w in text_a.split() if w.lower() not in stopwords and len(w) > 2)
-    words_b = set(w.lower() for w in text_b.split() if w.lower() not in stopwords and len(w) > 2)
-    if not words_a or not words_b:
-        return 0.0
-    overlap = words_a & words_b
-    return round(len(overlap) / min(len(words_a), len(words_b)), 3)
+def keyword_overlap_score(text_a: str, text_b: str) -> float:
+              
+            
+				stopwords = {"the", "a", "an", "is", "in", "on", "at", "to", "and", "of", "for", "has", "have"}
+				words_a = set(w.lower() for w in text_a.split() if w.lower() not in stopwords and len(w) > 2)
+				words_b = set(w.lower() for w in text_b.split() if w.lower() not in stopwords and len(w) > 2)
+				if not words_a or not words_b:
+					return 0.0
+				overlap = words_a & words_b
+				return round(len(overlap) / min(len(words_a), len(words_b)), 3)
 
 matches = []
 valid_posts = [p for p in COLLECTED_POSTS if p.get("text")]
