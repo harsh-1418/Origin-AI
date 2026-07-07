@@ -134,3 +134,6 @@ def generate_report(text: str = Form(...)):
     analysis = analyze_text(text=text)
     report_text = generate_investigation_report(analysis)
     return {
+        "analysis": analysis,
+        "report": report_text
+    }
